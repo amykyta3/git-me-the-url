@@ -19,7 +19,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/amykyta3/git-me-the-url",
-    packages=['gitmetheurl'],
+    packages=setuptools.find_packages(),
     entry_points = {
         "console_scripts": ['gitmetheurl = gitmetheurl.cmd:main']
     },
