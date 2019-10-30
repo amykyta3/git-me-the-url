@@ -37,9 +37,9 @@ def main():
     else:
         path = m.group("path")
         line = int(m.group("line"))
-        to_line = int(m.group("to_line"))
+        to_line = m.group("to_line")
         if to_line is not None:
-            line = tuple(sorted([line, to_line]))
+            line = tuple(sorted([line, int(to_line)]))
 
     #----------------------------------
     gmtu = GitMeTheURL()
