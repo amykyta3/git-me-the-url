@@ -4,6 +4,11 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+# Replace relative image path with github-hosted one
+long_description = long_description.replace(
+    "docs/cmd-example.gif",
+    "https://raw.githubusercontent.com/amykyta3/git-me-the-url/master/docs/cmd-example.gif?sanitize=true"
+)
 
 with open(os.path.join("gitmetheurl", "__about__.py")) as f:
     v_dict = {}
