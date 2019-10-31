@@ -2,7 +2,7 @@
 
 # Git me the URL!
 
-A python package that translates references in a local git repositroy into
+A python package that translates references in a local git repository into
 shareable URLs for popular Git hosting sites.
 
 Currently supports:
@@ -17,7 +17,7 @@ Install from [PyPi](https://pypi.org/project/git-me-the-url) using pip:
 
 ## Command line application
 
-Use it for everyday link sharing with friends
+Use it for everyday link sharing with friends:
 
 ![cmd-example](docs/cmd-example.gif)
 
