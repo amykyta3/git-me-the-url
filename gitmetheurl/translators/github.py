@@ -15,7 +15,7 @@ class GitHub(Translator):
         At Branch:  https://github.com/PROJECT/REPO/blob/whitespace/test.txt
         At commit:  https://github.com/PROJECT/REPO/blob/5e80224ebc8b7324e085af68d3071739ff8f1b02/test.txt
                     https://github.com/PROJECT/REPO/tree/5e80224ebc8b7324e085af68d3071739ff8f1b02
-        
+
         Single line:    https://github.com/PROJECT/REPO/blob/master/test.txt#L4
         Line Span:      https://github.com/PROJECT/REPO/blob/master/test.txt#L8-L12
     """
@@ -23,10 +23,11 @@ class GitHub(Translator):
     HTTPS_REGEX = r'https://github\.com/(?P<project>[\w\-]+)/(?P<repo>[\w\-]+)\.git'
 
 
-    def construct_source_url(self, remote: str, relpath: str, is_folder: bool, line = None, commit: str = None, branch: str = None):
-        
+    def construct_source_url(self, remote: str, relpath: str, is_folder: bool, line = None, commit: str = None, branch: str = None) -> str:
+
         # Parse remote
         m = re.fullmatch(self.SSH_REGEX, remote) or re.fullmatch(self.HTTPS_REGEX, remote)
+        assert m is not None
         project_name, repo_name = m.group("project", "repo")
 
         if is_folder:
@@ -48,7 +49,7 @@ class GitHub(Translator):
         else:
             # uuh panic!!
             ref = "master"
-        
+
         return "https://github.com/%s/%s/%s/%s/%s%s" % (
             project_name, repo_name,
             urltype, ref,

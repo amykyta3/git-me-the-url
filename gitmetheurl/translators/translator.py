@@ -1,8 +1,8 @@
 import re
 
 class Translator:
-    SSH_REGEX = None
-    HTTPS_REGEX = None
+    SSH_REGEX = None # type: str
+    HTTPS_REGEX = None # type: str
 
     @classmethod
     def is_match(cls, remote: str) -> bool:
@@ -26,7 +26,7 @@ class Translator:
         return False
 
 
-    def construct_source_url(self, remote: str, relpath: str, is_folder: bool, line = None, commit: str = None, branch: str = None):
+    def construct_source_url(self, remote: str, relpath: str, is_folder: bool, line = None, commit: str = None, branch: str = None) -> str:
         """
         Constructs the file browser URL given the available information.
 

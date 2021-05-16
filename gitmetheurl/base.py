@@ -1,4 +1,5 @@
 import os
+from typing import TYPE_CHECKING
 
 import git
 
@@ -7,9 +8,13 @@ from .translators import GitLab
 from .translators import Bitbucket
 from .plugin_loader import get_translator_plugins
 
+if TYPE_CHECKING:
+    from typing import Optional, List, Type, Union, Tuple
+    from .translators.translator import Translator
+
 class GitMeTheURL:
 
-    def __init__(self, translators=None):
+    def __init__(self, translators: "Optional[List[Type[Translator]]]"=None):
         if translators:
             # Use user-specified translators
             self.translators = translators
@@ -25,7 +30,7 @@ class GitMeTheURL:
             self.translators.extend(get_translator_plugins())
 
 
-    def get_source_url(self, path: str, line = None, exact_commit: bool = False) -> str:
+    def get_source_url(self, path: str, line: "Union[int, Tuple[int, int]]" = None, exact_commit: bool = False) -> str:
         """
         Convert a path to a file into a URL to the file in the service's source
         browser.
@@ -48,8 +53,8 @@ class GitMeTheURL:
 
         try:
             urls = repo.remote().urls # raises ValueError if there is no origin
-        except ValueError:
-            raise GMTUException("Repository does not have any remotes")
+        except ValueError as e:
+            raise GMTUException("Repository does not have any remotes") from e
 
         for url in urls:
             remote = url
@@ -93,7 +98,7 @@ class GitMeTheURL:
 
 
     @staticmethod
-    def get_branch(repo):
+    def get_branch(repo) -> "Optional[str]":
         try:
             return repo.active_branch.name
         except TypeError:

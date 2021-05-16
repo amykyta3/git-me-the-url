@@ -6,7 +6,7 @@ import git
 
 from . import GitMeTheURL, GMTUException
 
-def main():
+def main() -> None:
     #----------------------------------
     # Collect command line arguments
     #----------------------------------
