@@ -93,6 +93,9 @@ class GitMeTheURL:
 
         # Find remote branch that contains this commit
         for ref in repo.remotes.origin.refs:
+            if ref.name == "origin/HEAD":
+                # Skip origin/HEAD. Not a branch!
+                continue
             if repo.is_ancestor(repo.head.object, ref.object):
                 # Return branch name but strip "origin/" prefix
                 return ref.name[len("origin/"):]
