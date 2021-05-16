@@ -1,5 +1,5 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/git-me-the-url.svg)](https://pypi.org/project/git-me-the-url)
-[![build](https://github.com/amykyta3/git-me-the-url/workflows/build/badge.svg)](https://github.com/amykyta3/git-me-the-url/actions?query=workflow%3Abuild+branch%3Amaster)
+[![build](https://github.com/amykyta3/git-me-the-url/actions/workflows/build.yml/badge.svg)](https://github.com/amykyta3/git-me-the-url/actions?query=workflow%3Abuild+branch%3Amaster)
 
 # Git me the URL!
 
