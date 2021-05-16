@@ -5,15 +5,24 @@ import git
 from .translators import GitHub
 from .translators import GitLab
 from .translators import Bitbucket
+from .plugin_loader import get_translator_plugins
 
 class GitMeTheURL:
 
-    def __init__(self):
-        self.translators = [
-            GitHub,
-            GitLab,
-            Bitbucket
-        ]
+    def __init__(self, translators=None):
+        if translators:
+            # Use user-specified translators
+            self.translators = translators
+        else:
+            # Use built-in translators
+            self.translators = [
+                GitHub,
+                GitLab,
+                Bitbucket
+            ]
+
+            # .. and discover any plugins
+            self.translators.extend(get_translator_plugins())
 
 
     def get_source_url(self, path: str, line = None, exact_commit: bool = False) -> str:

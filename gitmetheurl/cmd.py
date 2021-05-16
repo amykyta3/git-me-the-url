@@ -39,9 +39,6 @@ def main():
     #----------------------------------
     gmtu = GitMeTheURL()
 
-    # load additional translators
-    gmtu.translators.extend(get_translator_plugins())
-
     #----------------------------------
     # Translate the path!
     #----------------------------------
@@ -61,18 +58,3 @@ def main():
     # Output
     #----------------------------------
     print(url)
-
-
-#===============================================================================
-# Plugin
-
-def iter_entry_points(group_name):
-    try:
-        import pkg_resources
-    except ImportError:
-        return []
-
-    return pkg_resources.iter_entry_points(group_name)
-
-def get_translator_plugins():
-    return [ep.load() for ep in iter_entry_points("gitmetheurl.translators")]
