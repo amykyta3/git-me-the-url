@@ -30,9 +30,7 @@ jobs:
 #-------------------------------------------------------------------------------
   build_sdist:
     needs:
-      - test
       - lint
-      - mypy
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
