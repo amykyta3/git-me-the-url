@@ -3,7 +3,6 @@ import re
 import sys
 
 import git
-import pyperclip
 
 from . import GitMeTheURL, GMTUException
 
@@ -17,10 +16,6 @@ def main():
     parser.add_argument(
         '-e', '--exact', dest='exact_commit', action='store_true',default=False,
         help="If set, URL will point to the file at the exact commit."
-    )
-    parser.add_argument(
-        '-c', '--clipboard', dest='clipboard', action='store_true',default=False,
-        help="Store the result in the clipboard rather than printing to stdout."
     )
     parser.add_argument('target_path',
         nargs="?", default=".",
@@ -65,16 +60,7 @@ def main():
     #----------------------------------
     # Output
     #----------------------------------
-    if options.clipboard:
-        try:
-            pyperclip.copy(url)
-        except pyperclip.PyperclipException:
-            print("Unable to save to clipboard. To fix this, install xclip:", file=sys.stderr)
-            print("    sudo apt install xclip", file=sys.stderr)
-            sys.exit(1)
-        print("(URL coped to clipboard)", file=sys.stderr)
-    else:
-        print(url)
+    print(url)
 
 
 #===============================================================================
