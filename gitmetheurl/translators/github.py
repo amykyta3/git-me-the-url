@@ -1,57 +1,24 @@
+from .translator import TranslatorSpec
 
-import re
+class GitHub(TranslatorSpec):
+    remote_regexes = [
+        r'git@github\.com:(?P<project_name>[\w\-]+)/(?P<repo_name>[\w\-]+)\.git',
+        r'https://github\.com/(?P<project_name>[\w\-]+)/(?P<repo_name>[\w\-]+)\.git',
+    ]
 
-from .translator import Translator
+    url_root_recipes = [
+        "https://github.com/{project_name}/{repo_name}/",
+    ]
 
-class GitHub(Translator):
-    """
-    Remote formats:
-        git@github.com:PROJECT/REPO.git
-        https://github.com/PROJECT/REPO.git
+    url_body_recipes = [
+        ("blob/{branch_name}/{path}", "is_folder == False"),
+        ("tree/{branch_name}/{path}", "is_folder == True"),
+        ("blob/{commit_hash}/{path}", "is_folder == False"),
+        ("tree/{commit_hash}/{path}", "is_folder == True"),
+    ]
 
-    Views:
-        File:       https://github.com/PROJECT/REPO/blob/master/test.txt
-        Folder:     https://github.com/PROJECT/REPO/tree/master/subfolder
-        At Branch:  https://github.com/PROJECT/REPO/blob/whitespace/test.txt
-        At commit:  https://github.com/PROJECT/REPO/blob/5e80224ebc8b7324e085af68d3071739ff8f1b02/test.txt
-                    https://github.com/PROJECT/REPO/tree/5e80224ebc8b7324e085af68d3071739ff8f1b02
-
-        Single line:    https://github.com/PROJECT/REPO/blob/master/test.txt#L4
-        Line Span:      https://github.com/PROJECT/REPO/blob/master/test.txt#L8-L12
-    """
-    SSH_REGEX = r'git@github\.com:(?P<project>[\w\-]+)/(?P<repo>[\w\-]+)\.git'
-    HTTPS_REGEX = r'https://github\.com/(?P<project>[\w\-]+)/(?P<repo>[\w\-]+)\.git'
-
-
-    def construct_source_url(self, remote: str, relpath: str, is_folder: bool, line = None, commit: str = None, branch: str = None) -> str:
-
-        # Parse remote
-        m = re.fullmatch(self.SSH_REGEX, remote) or re.fullmatch(self.HTTPS_REGEX, remote)
-        assert m is not None
-        project_name, repo_name = m.group("project", "repo")
-
-        if is_folder:
-            urltype = "tree"
-            line_suffix = ""
-        else:
-            urltype = "blob"
-            if isinstance(line, int):
-                line_suffix = "#L%d" % line
-            elif isinstance(line, tuple) and len(line) == 2:
-                line_suffix = "#L%d-L%d" % line
-            else:
-                line_suffix = ""
-
-        if branch is not None:
-            ref = branch
-        elif commit is not None:
-            ref = commit
-        else:
-            # uuh panic!!
-            ref = "master"
-
-        return "https://github.com/%s/%s/%s/%s/%s%s" % (
-            project_name, repo_name,
-            urltype, ref,
-            relpath, line_suffix
-        )
+    url_suffix_recipes = [
+        ("#L{start_line}-L{end_line}", "is_folder == False"),
+        ("#L{line}", "is_folder == False"),
+        "",
+    ]

@@ -1,5 +1,6 @@
 import os
 from typing import TYPE_CHECKING
+import functools
 
 import git
 
@@ -10,11 +11,11 @@ from .plugin_loader import get_translator_plugins
 
 if TYPE_CHECKING:
     from typing import Optional, List, Type, Union, Tuple
-    from .translators.translator import Translator
+    from .translators.translator import TranslatorSpec
 
 class GitMeTheURL:
 
-    def __init__(self, translators: "Optional[List[Type[Translator]]]"=None):
+    def __init__(self, translators: "Optional[List[Type[TranslatorSpec]]]"=None):
         if translators:
             # Use user-specified translators
             self.translators = translators
@@ -29,7 +30,7 @@ class GitMeTheURL:
             # .. and discover any plugins
             self.translators.extend(get_translator_plugins())
 
-
+    @functools.lru_cache
     def get_source_url(self, path: str, line: "Union[int, Tuple[int, int]]" = None, exact_commit: bool = False) -> str:
         """
         Convert a path to a file into a URL to the file in the service's source
@@ -47,27 +48,13 @@ class GitMeTheURL:
             If overridden to ``True``, will attempt to generate a URL that
             points to the source file at the same commit as it is currently.
         """
-        repo = git.Repo(path, search_parent_directories=True)
+        remote, info = self._get_target_info(path, exact_commit)
 
-        root_path = repo.git.rev_parse("--show-toplevel")
-
-        try:
-            urls = repo.remote().urls # raises ValueError if there is no origin
-        except ValueError as e:
-            raise GMTUException("Repository does not have any remotes") from e
-
-        for url in urls:
-            remote = url
-            break
-        else:
-            raise ValueError("Repository does not have a remote URL set")
-
-        is_folder = os.path.isdir(path)
-        relpath = os.path.relpath(path, root_path)
-
-        # Eliminate corner case
-        if relpath == ".":
-            relpath = ""
+        # Stuff line number(s) into info
+        if isinstance(line, int):
+            info['line'] = line
+        elif isinstance(line, tuple) and len(line) == 2:
+            info['start_line'], info['end_line'] = line
 
         # Lookup translator
         for t in self.translators:
@@ -77,6 +64,37 @@ class GitMeTheURL:
         else:
             raise GMTUException("Unable to convert remote: %s" % remote)
 
+        # Construct the URL!
+        return translator.get_source_url(remote, info)
+
+
+
+    def _get_target_info(self, path:str, exact_commit: bool = False) -> dict:
+        """
+        Collects relevant Git information about the target path.
+
+        Returns a dictionary of entries to be used by the translator to form a URL
+
+        keys:
+        - is_folder
+        - path
+        - commit_hash
+        - branch_name
+        """
+        repo = git.Repo(path, search_parent_directories=True)
+        remote = self._get_remote(repo)
+
+        info = {}
+
+        info['is_folder'] = os.path.isdir(path)
+
+        # File path within the repo
+        root_path = repo.git.rev_parse("--show-toplevel")
+        relpath = os.path.relpath(path, root_path)
+        if relpath == ".":
+            relpath = ""
+        info['path'] = relpath
+
         # Get branch/commit reference as appropriate
         commit = None
         branch = None
@@ -85,20 +103,34 @@ class GitMeTheURL:
             commit = repo.head.object.hexsha
         else:
             # Attempt to determine current branch
-            branch = self.get_branch(repo)
+            branch = self._get_branch(repo)
 
             if branch is None:
                 # failed to get remote branch. Fall back to commit
                 commit = repo.head.object.hexsha
+        if commit is not None:
+            info['commit_hash'] = commit
+        if branch is not None:
+            info['branch_name'] = branch
 
-        # Construct the URL!
-        return translator().construct_source_url(
-            remote, relpath, is_folder, line, commit, branch
-        )
+        return remote, info
 
 
     @staticmethod
-    def get_branch(repo) -> "Optional[str]":
+    def _get_remote(repo: git.Repo) -> str:
+        try:
+            urls = repo.remote().urls # raises ValueError if there is no origin
+        except ValueError as e:
+            raise GMTUException("Repository does not have any remotes") from e
+
+        for url in urls:
+            return url
+
+        raise ValueError("Repository does not have a remote URL set")
+
+
+    @staticmethod
+    def _get_branch(repo: git.Repo) -> "Optional[str]":
         try:
             return repo.active_branch.name
         except TypeError:
@@ -114,6 +146,7 @@ class GitMeTheURL:
                 # Return branch name but strip "origin/" prefix
                 return ref.name[len("origin/"):]
         return None
+
 
 class GMTUException(Exception):
     pass
