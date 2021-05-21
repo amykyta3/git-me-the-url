@@ -30,7 +30,6 @@ class GitMeTheURL:
             # .. and discover any plugins
             self.translators.extend(get_translator_plugins())
 
-    @functools.lru_cache
     def get_source_url(self, path: str, line: "Union[int, Tuple[int, int]]" = None, exact_commit: bool = False) -> str:
         """
         Convert a path to a file into a URL to the file in the service's source
@@ -57,19 +56,16 @@ class GitMeTheURL:
             info['start_line'], info['end_line'] = line
 
         # Lookup translator
-        for t in self.translators:
-            if t.is_match(remote):
-                translator = t
-                break
-        else:
+        translator = self._lookup_translator(remote)
+        if translator is None:
             raise GMTUException("Unable to convert remote: %s" % remote)
 
         # Construct the URL!
         return translator.get_source_url(remote, info)
 
 
-
-    def _get_target_info(self, path:str, exact_commit: bool = False) -> dict:
+    @functools.lru_cache
+    def _get_target_info(self, path:str, exact_commit: bool = False) -> 'Tuple[str, dict]':
         """
         Collects relevant Git information about the target path.
 
@@ -115,6 +111,12 @@ class GitMeTheURL:
 
         return remote, info
 
+    @functools.lru_cache
+    def _lookup_translator(self, remote:str) -> 'Optional[TranslatorSpec]':
+        for t in self.translators:
+            if t.is_match(remote):
+                return t
+        return None
 
     @staticmethod
     def _get_remote(repo: git.Repo) -> str:
