@@ -9,4 +9,5 @@ cd $this_dir/../
 pylint --rcfile $this_dir/pylint.rc gitmetheurl
 
 # Run static type checking
+cd $this_dir
 mypy $this_dir/../gitmetheurl

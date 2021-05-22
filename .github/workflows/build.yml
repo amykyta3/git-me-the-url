@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Lint
         run: |
-          pylint --rcfile test/pylint.rc gitmetheurl
+          pylint --rcfile test/pylint.rc gmtu-plugin-example
 
 #-------------------------------------------------------------------------------
   build_sdist:
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Only publish when a GitHub Release is created.
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'release'
     steps:
       - uses: actions/download-artifact@v2
         with:

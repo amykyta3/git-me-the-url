@@ -1,10 +1,14 @@
 import argparse
 import re
 import sys
+from typing import TYPE_CHECKING
 
 import git
 
 from . import GitMeTheURL, GMTUException
+
+if TYPE_CHECKING:
+    from typing import Optional, Tuple, Union
 
 def main() -> None:
     #----------------------------------
@@ -26,15 +30,19 @@ def main() -> None:
     #----------------------------------
     # Parse target path
     m = re.fullmatch(r'(?P<path>.+?):(?P<line>\d+)(?:-(?P<to_line>\d+))?', options.target_path)
+    line = None # type: Optional[Union[int, Tuple[int, int]]]
     if not m:
         path = options.target_path
-        line = None
     else:
         path = m.group("path")
         line = int(m.group("line"))
-        to_line = m.group("to_line")
-        if to_line is not None:
-            line = tuple(sorted([line, int(to_line)]))
+        to_line_str = m.group("to_line")
+        if to_line_str is not None:
+            to_line = int(to_line_str)
+            line = (
+                min(line, to_line),
+                max(line, to_line),
+            )
 
     #----------------------------------
     gmtu = GitMeTheURL()

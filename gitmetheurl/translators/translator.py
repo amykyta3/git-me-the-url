@@ -1,43 +1,73 @@
+from typing import TYPE_CHECKING
 import re
 
+if TYPE_CHECKING:
+    from typing import List, Union, Tuple
+    URLRecipe = List[Union[str, Tuple[str, str]]]
+
 class TranslatorSpec:
-    #: list of regexes to match the git remote URL.
-    #: This is typically two regexes - one for SSH and another for HTTPS
-    #: Regexes are searched sequentially. The first successful match is used.
-    #: If an expression uses named groups, the group names can be used later in URL recipes
-    remote_regexes = []
+    """
+    Remote URL Patterns
+    -------------------
+    The ``remote_regexes`` class variable is used to define a list of regular
+    expressions to match the remote URL for this service.
+    This is typically two regexes - one for SSH and another for HTTPS
 
-    # TODO: Clean up these docstrings!
-    #: List of URL recipies.
-    #: a recipe entry can be either a format string or a tuple containing a
-    #: format string and conditional expression.
-    #:
-    #: format strings are processed using str.format() using the keys available
-    #: in the info dictionary.
-    #:
-    #: Conditional strings are evaluated. keys from the info dictionary are
-    #: available as local variables
-    #:
-    #: The first recipe that matches its conditional (if any), and can be
-    #: formatted successfully is used.
-    #:
-    #: [
-    #:       ("https://github.com/{project_name}/{repo_name}/blob/{branch_name}/{path}", "is_folder == False"),
-    #:       ("https://github.com/{project_name}/{repo_name}/tree/{branch_name}/{path}", "is_folder == True"),
-    #: ]
+    If an expression uses named groups, the group names can be referenced later
+    in URL recipes. Since URL patterns in this list are searched sequentially,
+    named groups from only the first successful match are captured.
 
+
+    URL Recipes
+    -----------
+    URL Recipes are used to construct the resulting weblink. A recipe entry can
+    either be simply a format string, or a tuple containing a format string
+    followed by a conditional expression:
+
+        recipes = [
+            <format string>,
+            (<format string>, <expression string>),
+        ]
+
+    During recipe processing, keys from an "info" dictionary are made avaialble.
+    These include the following:
+
+    * ``path`` - target path, relative to the repository root.
+    * ``is_folder`` - Boolean indicating whether the path is a directory or not.
+    * ``branch_name`` - The target's current branch name. If not known, this key is not available.
+    * ``commit_hash`` - The target's exact commit hash.
+    * ``line`` - target line number. Only exists if a single line was specified in the target
+    * ``start_line``, ``end_line`` - target line range. Only exists if a range
+      of lines were specified in the target.
+
+    .. as well as any named capture groups from the remote URL match earlier.
+
+    Format strings are processed using ``str.format()`` using the keys available
+    in the info dictionary.
+
+    Conditional strings are evaluated. Keys from the info dictionary are
+    available as local variables.
+
+    The first recipe that matches its conditional (if any), and can be
+    formatted successfully (all keys referenced are available) is used.
+
+    """
+
+    #: List of regexes to match the git remote URL.
+    remote_regexes = [] # type: List[str]
 
     #: Formatting recipes for the URL prefix.
     #: This is usually for handling variations in the repository's base URL
-    url_root_recipes = []
+    url_root_recipes = [] # type: URLRecipe
 
     #: Formatting recipes for the main contents of the URL
-    #: This is a good place to define variations in file/folder paths, branch/commit references, etc.
-    url_body_recipes = []
+    #: This is a good place to define variations in file/folder paths,
+    #: branch/commit references, etc.
+    url_body_recipes = [] # type: URLRecipe
 
     #: Formatting recipes for the URL's suffix
     #: Use this to define line number highligting, etc.
-    url_suffix_recipes = []
+    url_suffix_recipes = [] # type: URLRecipe
 
     @classmethod
     def is_match(cls, remote: str) -> bool:

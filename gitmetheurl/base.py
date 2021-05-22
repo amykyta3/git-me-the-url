@@ -10,8 +10,10 @@ from .translators import Bitbucket
 from .plugin_loader import get_translator_plugins
 
 if TYPE_CHECKING:
-    from typing import Optional, List, Type, Union, Tuple
+    from typing import Optional, List, Type, Union, Tuple, Dict
     from .translators.translator import TranslatorSpec
+
+    InfoDict = Dict[str, Union[str, bool]]
 
 class GitMeTheURL:
 
@@ -30,7 +32,7 @@ class GitMeTheURL:
             # .. and discover any plugins
             self.translators.extend(get_translator_plugins())
 
-    def get_source_url(self, path: str, line: "Union[int, Tuple[int, int]]" = None, exact_commit: bool = False) -> str:
+    def get_source_url(self, path: str, line: "Optional[Union[int, Tuple[int, int]]]" = None, exact_commit: bool = False) -> str:
         """
         Convert a path to a file into a URL to the file in the service's source
         browser.
@@ -80,7 +82,7 @@ class GitMeTheURL:
         repo = git.Repo(path, search_parent_directories=True)
         remote = self._get_remote(repo)
 
-        info = {}
+        info = {} # type: InfoDict
 
         info['is_folder'] = os.path.isdir(path)
 
@@ -112,7 +114,7 @@ class GitMeTheURL:
         return remote, info
 
     @functools.lru_cache
-    def _lookup_translator(self, remote:str) -> 'Optional[TranslatorSpec]':
+    def _lookup_translator(self, remote:str) -> 'Optional[Type[TranslatorSpec]]':
         for t in self.translators:
             if t.is_match(remote):
                 return t
