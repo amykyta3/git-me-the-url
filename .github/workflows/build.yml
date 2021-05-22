@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Lint
         run: |
-          pylint --rcfile test/pylint.rc gmtu-plugin-example
+          pylint --rcfile test/pylint.rc gitmetheurl
 
 #-------------------------------------------------------------------------------
   build_sdist:
