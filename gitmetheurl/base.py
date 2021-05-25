@@ -22,15 +22,13 @@ class GitMeTheURL:
             # Use user-specified translators
             self.translators = translators
         else:
-            # Use built-in translators
-            self.translators = [
+            # Use plugin translators & built-in
+            self.translators = get_translator_plugins()
+            self.translators.extend([
                 GitHub,
                 GitLab,
-                Bitbucket
-            ]
-
-            # .. and discover any plugins
-            self.translators.extend(get_translator_plugins())
+                Bitbucket,
+            ])
 
     def get_source_url(self, path: str, line: "Optional[Union[int, Tuple[int, int]]]" = None, exact_commit: bool = False) -> str:
         """
@@ -66,7 +64,7 @@ class GitMeTheURL:
         return translator.get_source_url(remote, info)
 
 
-    @functools.lru_cache
+    @functools.lru_cache(maxsize=None)
     def _get_target_info(self, path:str, exact_commit: bool = False) -> 'Tuple[str, dict]':
         """
         Collects relevant Git information about the target path.
@@ -113,7 +111,7 @@ class GitMeTheURL:
 
         return remote, info
 
-    @functools.lru_cache
+    @functools.lru_cache(maxsize=None)
     def _lookup_translator(self, remote:str) -> 'Optional[Type[TranslatorSpec]]':
         for t in self.translators:
             if t.is_match(remote):

@@ -2,8 +2,8 @@ from .translator import TranslatorSpec
 
 class Bitbucket(TranslatorSpec):
     remote_regexes = [
-        r'git@bitbucket\.org:(?P<project>[\w\-]+)/(?P<repo>[\w\-]+)\.git'
-        r'https://[\w\-]+@bitbucket\.org/(?P<project>[\w\-]+)/(?P<repo>[\w\-]+)\.git'
+        r'git@bitbucket\.org:(?P<project_name>[\w\-]+)/(?P<repo>[\w\-]+)\.git',
+        r'https://[\w\-]+@bitbucket\.org/(?P<project_name>[\w\-]+)/(?P<repo>[\w\-]+)\.git',
     ]
 
     url_root_recipes = [

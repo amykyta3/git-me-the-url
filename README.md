@@ -11,6 +11,8 @@ Currently supports:
 * GitLab
 * Bitbucket
 
+To add your own URL translator, see this example project: https://github.com/amykyta3/gmtu-plugin-example
+
 ## Installing
 Install from [PyPi](https://pypi.org/project/git-me-the-url) using pip:
 
@@ -21,8 +23,6 @@ Install from [PyPi](https://pypi.org/project/git-me-the-url) using pip:
 Use it for everyday link sharing with friends:
 
 ![cmd-example](docs/cmd-example.gif)
-
-To add your own URL translator, see this example project: https://github.com/amykyta3/gmtu-plugin-example
 
 ## Python API
 
