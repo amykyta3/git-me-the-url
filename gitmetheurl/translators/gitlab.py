@@ -7,7 +7,7 @@ class GitLab(TranslatorSpec):
     ]
 
     url_root_recipes = [
-        "https://github.com/{project_name}/{repo_name}/",
+        "https://gitlab.com/{project_name}/{repo_name}/",
     ]
 
     url_body_recipes = [
