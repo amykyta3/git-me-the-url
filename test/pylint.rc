@@ -101,7 +101,13 @@ disable=
         cyclic-import,
 
         # Can't do until py35 support is dropped
-        consider-using-f-string
+        consider-using-f-string,
+
+        # User ignored
+        wrong-import-position,
+        eval-used,
+        import-outside-toplevel,
+        method-cache-max-size-none
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
