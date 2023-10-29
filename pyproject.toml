@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "git-me-the-url"
+dynamic = ["version"]
+requires-python = ">=3.5"
+dependencies = [
+    "gitpython",
+]
+
+authors = [
+    {name="Alex Mykyta"},
+]
+description = "Generate sharable links to your Git source"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Version Control :: Git",
+]
+
+[project.urls]
+Source = "https://github.com/amykyta3/git-me-the-url"
+Tracker = "https://github.com/amykyta3/git-me-the-url/issues"
+Changelog = "https://github.com/amykyta3/git-me-the-url/releases"
+
+[tool.setuptools.dynamic]
+version = {attr = "gitmetheurl.__about__.__version__"}
+
+[project.scripts]
+gitmetheurl = "gitmetheurl.cmd:main"

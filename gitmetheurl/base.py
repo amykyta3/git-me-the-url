@@ -64,7 +64,7 @@ class GitMeTheURL:
         return translator.get_source_url(remote, info)
 
 
-    @functools.lru_cache(maxsize=None)
+    @functools.lru_cache()
     def _get_target_info(self, path:str, exact_commit: bool = False) -> 'Tuple[str, dict]':
         """
         Collects relevant Git information about the target path.
@@ -111,7 +111,7 @@ class GitMeTheURL:
 
         return remote, info
 
-    @functools.lru_cache(maxsize=None)
+    @functools.lru_cache()
     def _lookup_translator(self, remote:str) -> 'Optional[Type[TranslatorSpec]]':
         for t in self.translators:
             if t.is_match(remote):

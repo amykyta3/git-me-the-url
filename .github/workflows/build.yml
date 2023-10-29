@@ -1,11 +1,18 @@
+name: build
+
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main
+      - 'dev/**'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   release:
     types:
       - published
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   lint:
@@ -15,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: Install dependencies
         run: |
@@ -30,10 +37,10 @@ jobs:
           pylint --rcfile test/pylint.rc gitmetheurl
 
 #-------------------------------------------------------------------------------
-  build_sdist:
+  build:
     needs:
       - lint
-    name: Build source distribution
+    name: Build distributions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -41,21 +48,30 @@ jobs:
       - uses: actions/setup-python@v4
         name: Install Python
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
-      - name: Build sdist
-        run: python setup.py sdist
+      - name: Install dependencies
+        run: |
+          python -m pip install -U build
+
+      - name: Build
+        run: python -m build
 
       - uses: actions/upload-artifact@v3
         with:
-          path: dist/*.tar.gz
+          path: |
+            dist/*.tar.gz
+            dist/*.whl
 
 #-------------------------------------------------------------------------------
   deploy:
     needs:
-      - build_sdist
+      - build
 
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
 
     # Only publish when a GitHub Release is created.
     if: github.event_name == 'release'
@@ -66,6 +82,3 @@ jobs:
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
