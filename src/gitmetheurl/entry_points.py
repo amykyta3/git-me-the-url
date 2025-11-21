@@ -25,7 +25,7 @@ elif sys.version_info >= (3,8,0):
         return eps
 
 else:
-    import pkg_resources # type: ignore
+    import pkg_resources
 
     def _get_entry_points(group_name: str) -> List['EntryPoint']:
         eps = []

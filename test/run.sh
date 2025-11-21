@@ -2,12 +2,19 @@
 
 set -e
 
-this_dir="$( cd "$(dirname "$0")" ; pwd -P )"
-cd $this_dir/../
+cd "$(dirname "$0")"
+
+python3.13 -m venv .venv
+source .venv/bin/activate
+
+# Install test dependencies
+pip install -r requirements.txt
+
+# Install dut
+pip install -e ".."
 
 # Run lint
-pylint --rcfile $this_dir/pylint.rc gitmetheurl
+pylint --rcfile pylint.rc ../src/gitmetheurl
 
 # Run static type checking
-cd $this_dir
-mypy $this_dir/../gitmetheurl
+mypy ../src/gitmetheurl

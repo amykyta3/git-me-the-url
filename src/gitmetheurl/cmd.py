@@ -53,10 +53,10 @@ def main() -> None:
     try:
         url = gmtu.get_source_url(path, line=line, exact_commit=options.exact_commit)
     except git.InvalidGitRepositoryError:
-        print("error: Path does not point to a git repository: %s" % path, file=sys.stderr)
+        print("error: Path does not point to a git repository:", path, file=sys.stderr)
         sys.exit(1)
     except git.NoSuchPathError:
-        print("error: Path does not exist: %s" % path, file=sys.stderr)
+        print("error: Path does not exist:", path, file=sys.stderr)
         sys.exit(1)
     except GMTUException as e:
         print("error:", e.args[0], file=sys.stderr)

@@ -58,7 +58,7 @@ class GitMeTheURL:
         # Lookup translator
         translator = self._lookup_translator(remote)
         if translator is None:
-            raise GMTUException("Unable to convert remote: %s" % remote)
+            raise GMTUException(f"Unable to convert remote: {remote}")
 
         # Construct the URL!
         return translator.get_source_url(remote, info)

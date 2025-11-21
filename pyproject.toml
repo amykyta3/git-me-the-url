@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "git-me-the-url"
 dynamic = ["version"]
-requires-python = ">=3.5"
+requires-python = ">=3.7"
 dependencies = [
     "gitpython",
 ]
@@ -15,22 +15,14 @@ authors = [
 ]
 description = "Generate sharable links to your Git source"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = {text = "LGPLv3"}
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3 :: Only",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Version Control :: Git",
 ]
